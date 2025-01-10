@@ -4,9 +4,11 @@ import requests
 import logger
 import mexc_api
 from mexc_api import OrderStatus
-import simulate_mexc_api
+import os
+# import simulate_mexc_api
 # from simulate_mexc_api import OrderStatus
 import socket
+import json
 
 APP_DATA_FILE_NAME = "appdata.json"
 order_status = OrderStatus.SELLED
@@ -33,33 +35,40 @@ def update_orders_status(symbol, order_id):
         logger.write_msg("Failed to get order {} status.".format(order_id))
 
 def update_app_status():
-    global order_status, buy_price, sell_price, profit_ratio, order_id, byued_quantity, balance
+    global order_status, buy_price, sell_price, profit_ratio, order_id, byued_quantity, balance, down_ratio, enable_buy, open_price
     data = {
-        "order_status": order_status,  # Default value
+        "order_status": order_status.value,  # Default value
         "buy_price": buy_price,
         "sell_price": sell_price,
         "profit_ratio": profit_ratio,
         "order_id": order_id,
-        "bought_quantity": byued_quantity,
-        "balance": balance
+        "byued_quantity": byued_quantity,
+        "balance": balance,
+        "down_ratio": down_ratio,
+        "enable_buy": enable_buy,
+        "open_price": open_price
     }
     with open(APP_DATA_FILE_NAME, "w") as file:
         json.dump(data, file, indent=4)
 
 def load_app_status():
-    global order_status, buy_price, sell_price, profit_ratio, order_id, byued_quantity, balance
+    global order_status, buy_price, sell_price, profit_ratio, order_id, byued_quantity, balance, down_ratio, enable_buy, open_price
     
     if os.path.exists(APP_DATA_FILE_NAME):
         with open(APP_DATA_FILE_NAME, "r") as file:
             loaded_data = json.load(file)
             # Assign loaded data to variables
-            order_status = loaded_data.get("order_status", order_status)
+            order_status = OrderStatus(loaded_data.get("order_status", order_status))
             buy_price = loaded_data.get("buy_price", buy_price)
             sell_price = loaded_data.get("sell_price", sell_price)
             profit_ratio = loaded_data.get("profit_ratio", profit_ratio)
             order_id = loaded_data.get("order_id", order_id)
-            byued_quantity = loaded_data.get("bought_quantity", bought_quantity)
+            byued_quantity = loaded_data.get("byued_quantity", byued_quantity)
             balance = loaded_data.get("balance", balance)
+            down_ratio = loaded_data.get("down_ratio", down_ratio)
+            enable_buy = loaded_data.get("enable_buy", enable_buy)
+            open_price = loaded_data.get("open_price", open_price)
+            
             
         print("Data loaded successfully!")
     else:
