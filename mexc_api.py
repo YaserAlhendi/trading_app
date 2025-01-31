@@ -167,6 +167,23 @@ def cancel_order(symbol, order_id):
         print(f"Exception occurred: {str(e)}")
         return False
 
+def get_last_candlestick_timestamp(symbol, interval):
+    try:
+        url = f"https://api.mexc.com/api/v3/klines"
+        params = {
+            'symbol': symbol.upper(),
+            'interval': interval,
+            'limit': 1
+        }
+        response = requests.get(url, params=params)
+        data = response.json()
+        print(data)
+
+        return data[0][0]
+    
+    except Exception as e:
+        return None
+
 def get_current_price(symbol):
     try:
         # MEXC API endpoint for ticker price
@@ -185,3 +202,4 @@ def get_current_price(symbol):
     except Exception as e:
         print(f"Exception occurred: {str(e)}")
         return None
+
