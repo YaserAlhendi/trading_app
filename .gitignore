@@ -1,3 +1,8 @@
-log/*
+log/*msg*
+log/*Action*
+log/*balanc*
 __pycache__/*
 appdata.json
+test.py
+github_token.txt
+simulate_mexc_api.py
